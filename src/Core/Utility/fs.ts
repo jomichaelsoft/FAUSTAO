@@ -23,7 +23,6 @@ export function GetDirectoriesNamed(name: string, start: string): string[] {
 
 			if (directory.name === name) {
 				matches.push(path);
-
 				continue;
 			}
 

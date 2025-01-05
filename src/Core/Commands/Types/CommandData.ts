@@ -1,7 +1,7 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 
 /** Info on how to setup the command */
-export type SlashCommandBlueprint = SlashCommandBuilder;
+export type SlashCommandBlueprint = SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 
 /** What to call to run the command */
 export type SlashCommandHandler = (...args: any) => void;
