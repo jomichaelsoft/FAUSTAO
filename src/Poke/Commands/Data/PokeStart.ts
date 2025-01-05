@@ -12,7 +12,7 @@ export const SLASH_COMMAND_DATA: ISlashCommandData = {
 			option
 				.setName(CommandOption.channel)
 				.setDescription("Where should it be posted")
-				.addChannelTypes(ChannelType.GuildText)
+				.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 				.setRequired(true)
 		)
 

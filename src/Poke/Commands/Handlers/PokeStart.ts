@@ -1,4 +1,5 @@
-import { ChannelType, ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, TextChannel, User } from "discord.js";
+// prettier-ignore
+import { ChannelType, ChatInputCommandInteraction, MessageFlags, NewsChannel, PermissionFlagsBits, TextChannel, User } from "discord.js";
 import { CommandOption } from "../Enums/PokeStart";
 import { COMMAND_NOT_IN_GUILD, NOT_AN_ADMIN } from "../../../Core/Commands/Utility/ErrorMessages";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
@@ -29,7 +30,10 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	}
 
 	const host: User = interaction.options.getUser(CommandOption.host, true);
-	const channel: TextChannel = interaction.options.getChannel(CommandOption.channel, true, [ChannelType.GuildText]);
+	const channel: TextChannel | NewsChannel = interaction.options.getChannel(CommandOption.channel, true, [
+		ChannelType.GuildText,
+		ChannelType.GuildAnnouncement,
+	]);
 
 	if (host.bot) {
 		interaction.reply({
@@ -75,7 +79,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	}
 
 	try {
-		interaction.editReply("MAGNIFICENT SETUP. YOU ARE NOW TO BE WARNED EVERY DAY AT `00:00 UTC`");
+		interaction.editReply("MAGNIFICENT SETUP. YOU ARE NOW TO BE WARNED EVERY DAY AT `00:00 UTC-5 (Arch Time)`");
 	} catch (error) {
 		console.error(error);
 	}
