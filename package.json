@@ -2,7 +2,7 @@
   "name": "faustao",
   "version": "0.0.1",
   "description": "the best bot ever",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jomichaelsoft/FAUSTAO.git"
@@ -14,11 +14,13 @@
   },
   "homepage": "https://github.com/jomichaelsoft/FAUSTAO#readme",
   "dependencies": {
+    "cron": "^3.3.2",
     "discord.js": "^14.17.2",
     "dotenv": "^16.4.7",
     "mongoose": "^8.9.3"
   },
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "typescript": "^5.7.2"
   }
 }
