@@ -1,0 +1,24 @@
+{
+  "name": "faustao",
+  "version": "0.0.1",
+  "description": "the best bot ever",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jomichaelsoft/FAUSTAO.git"
+  },
+  "author": "jomichaelsoft",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/jomichaelsoft/FAUSTAO/issues"
+  },
+  "homepage": "https://github.com/jomichaelsoft/FAUSTAO#readme",
+  "dependencies": {
+    "discord.js": "^14.17.2",
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.9.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
