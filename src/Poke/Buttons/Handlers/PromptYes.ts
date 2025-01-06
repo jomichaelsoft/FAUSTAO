@@ -53,8 +53,9 @@ export async function Handle(interaction: ButtonInteraction) {
 			.replace(TAGS.hostId, poke.hostId)
 			.replace(TAGS.participantName, interaction.user.displayName);
 
-		interaction.editReply(formattedMessage);
+		await interaction.editReply(formattedMessage);
 	} catch (error) {
 		console.error(error);
+		return;
 	}
 }

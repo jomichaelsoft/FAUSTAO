@@ -17,7 +17,7 @@ function GetParticipatePrompt(): MessageCreateOptions {
 		.setDescription(PARTICIPATE_PROMPT.description)
 		.setColor("#c4dbff");
 
-	const buttonRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder();
+	const buttonRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder<ButtonBuilder>();
 
 	buttonRow.setComponents(
 		new ButtonBuilder()
@@ -80,6 +80,7 @@ export function Handle(readyClient: Client<true>) {
 					await channel.send(GetParticipatePrompt());
 				} catch (error) {
 					console.error(error);
+					continue;
 				}
 			}
 		},

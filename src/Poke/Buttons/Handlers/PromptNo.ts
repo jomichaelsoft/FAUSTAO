@@ -50,8 +50,9 @@ export async function Handle(interaction: ButtonInteraction) {
 		const message: string = PickRandomArrayItem(UNAVAILABLE_MESSAGES.participants);
 		const formattedMessage: string = message.replace(TAGS.participantName, interaction.user.displayName);
 
-		interaction.editReply(formattedMessage);
+		await interaction.editReply(formattedMessage);
 	} catch (error) {
 		console.error(error);
+		return;
 	}
 }

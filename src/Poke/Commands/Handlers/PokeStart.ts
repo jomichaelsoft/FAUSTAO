@@ -124,8 +124,9 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	}
 
 	try {
-		interaction.editReply(CONFIRMATION_MESSAGES.pokeStartSuccessful);
+		await interaction.editReply(CONFIRMATION_MESSAGES.pokeStartSuccessful);
 	} catch (error) {
 		console.error(error);
+		return;
 	}
 }
