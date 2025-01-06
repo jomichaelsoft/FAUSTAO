@@ -3,6 +3,8 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBui
 import { CronJob } from "cron";
 import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
+import { BUTTON_DATA as YES_BUTTON_DATA } from "../../Buttons/Data/PromptYes";
+import { BUTTON_DATA as NO_BUTTON_DATA } from "../../Buttons/Data/PromptNo";
 
 /**
  * @param array Where to pick from
@@ -36,7 +38,7 @@ export const PROMPT_TEMPLATE: string = `SINNERS, SIMPLY CAST YOUR VOTE BELOW IF 
 /**
  * @returns The message contents of our "people who want a session today"  list
  */
-function GetParticipatePrompt(readyClient: Client<true>): MessageCreateOptions {
+function GetParticipatePrompt(): MessageCreateOptions {
 	const regex: RegExp = new RegExp(PROMPT_YES_TAG + "|" + PROMPT_NO_TAG, "g");
 	const prompt: string = PROMPT_TEMPLATE.replace(regex, "...");
 
@@ -48,8 +50,8 @@ function GetParticipatePrompt(readyClient: Client<true>): MessageCreateOptions {
 	const buttonRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder();
 
 	buttonRow.setComponents(
-		new ButtonBuilder().setCustomId("TODO").setLabel("INTERESTED").setStyle(ButtonStyle.Primary),
-		new ButtonBuilder().setCustomId("TODO2").setLabel("FORFEIT").setStyle(ButtonStyle.Secondary)
+		new ButtonBuilder().setCustomId(YES_BUTTON_DATA.customId).setLabel("INTERESTED").setStyle(ButtonStyle.Primary),
+		new ButtonBuilder().setCustomId(NO_BUTTON_DATA.customId).setLabel("FORFEIT").setStyle(ButtonStyle.Secondary)
 	);
 
 	return {
@@ -99,7 +101,7 @@ export function Handle(readyClient: Client<true>) {
 				try {
 					const motivationalMessage: Message = await channel.send(GetMotivationalMessage());
 
-					motivationalMessage.reply(GetParticipatePrompt(readyClient));
+					motivationalMessage.reply(GetParticipatePrompt());
 				} catch (error) {
 					console.error(error);
 				}

@@ -11,11 +11,11 @@ import { Client } from "discord.js";
  * @returns Every folder in the project with a path like ".../Events/Data"
  */
 function GetEveryEventDataDirectory(): string[] {
-	const eventDirectories: string[] = GetDirectoriesNamed("Events", SRC_PATH);
+	const directories: string[] = GetDirectoriesNamed("Events", SRC_PATH);
 	const pathsOfThoseWithData: string[] = [];
 
-	for (const eventDirectory of eventDirectories) {
-		const dataPath: string = join(eventDirectory, "Data");
+	for (const directory of directories) {
+		const dataPath: string = join(directory, "Data");
 
 		if (existsSync(dataPath)) {
 			pathsOfThoseWithData.push(dataPath);

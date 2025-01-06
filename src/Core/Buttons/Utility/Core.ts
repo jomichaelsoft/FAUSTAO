@@ -6,10 +6,10 @@ import { existsSync } from "fs";
  * I like to organize my stuff into folders. We do this to turn
  * that human friendly input into machine readable output
  *
- * @returns Every folder in the project with a path like ".../Commands/Data"
+ * @returns Every folder in the project with a path like ".../Buttons/Data"
  */
-function GetEveryCommandDataDirectory(): string[] {
-	const directories: string[] = GetDirectoriesNamed("Commands", SRC_PATH);
+function GetEveryButtonDataDirectory(): string[] {
+	const directories: string[] = GetDirectoriesNamed("Buttons", SRC_PATH);
 	const pathsOfThoseWithData: string[] = [];
 
 	for (const directory of directories) {
@@ -23,5 +23,5 @@ function GetEveryCommandDataDirectory(): string[] {
 	return pathsOfThoseWithData;
 }
 
-/** An array of all ".../Commands/Data" folders */
-export const EVERY_COMMAND_DATA: string[] = GetEveryCommandDataDirectory();
+/** An array of all ".../Buttons/Data" folders */
+export const EVERY_BUTTON_DATA: string[] = GetEveryButtonDataDirectory();
