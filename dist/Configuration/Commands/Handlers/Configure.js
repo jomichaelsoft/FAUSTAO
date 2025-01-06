@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Handle = Handle;
 // prettier-ignore
 const discord_js_1 = require("discord.js");
-const PokeStart_1 = require("../Enums/PokeStart");
 const ErrorMessages_1 = require("../../../Core/Commands/Locale/ErrorMessages");
-const Poke_1 = require("../../Models/Poke");
-const PokeStart_2 = require("../Locale/PokeStart");
+const Configure_1 = require("../Enums/Configure");
+const Configuration_1 = require("../../Models/Configuration");
+const Configure_2 = require("../Locale/Configure");
 /**
- * Saves info up on a database for later use in the poke cronjob
+ * Just saves user variables to the database
  *
  * @param interaction The command's origin
  */
@@ -27,14 +27,14 @@ async function Handle(interaction) {
         });
         return;
     }
-    const host = interaction.options.getUser(PokeStart_1.CommandOption.host, true);
-    const channel = interaction.options.getChannel(PokeStart_1.CommandOption.channel, true, [
+    const hostRole = interaction.options.getRole(Configure_1.CommandOption.hostRole, true);
+    const goalsChannel = interaction.options.getChannel(Configure_1.CommandOption.goalsChannel, true, [
         discord_js_1.ChannelType.GuildText,
         discord_js_1.ChannelType.GuildAnnouncement,
     ]);
-    if (host.bot) {
+    if (hostRole.managed) {
         interaction.reply({
-            content: PokeStart_2.ERROR_MESSAGES.hostIsBot,
+            content: Configure_2.ERROR_MESSAGES.hostRoleIsFromBot,
             flags: discord_js_1.MessageFlags.Ephemeral,
         });
         return;
@@ -46,24 +46,28 @@ async function Handle(interaction) {
         console.error(error);
         return;
     }
+    let configuration;
     try {
-        const existingPoke = await Poke_1.PokeModel.findOne({ guildId: interaction.guildId });
-        if (existingPoke) {
-            interaction.editReply(PokeStart_2.ERROR_MESSAGES.pokeAlreadyActive);
-            return;
+        const existing = await Configuration_1.ConfigurationModel.findOne({
+            guildId: interaction.guildId,
+        });
+        if (existing) {
+            configuration = existing;
+        }
+        else {
+            configuration = new Configuration_1.ConfigurationModel();
         }
     }
     catch (error) {
         interaction.editReply(ErrorMessages_1.COMMON_ERROR_MESSAGES.databaseFail);
-        console.log(error);
+        console.error(error);
         return;
     }
-    const poke = new Poke_1.PokeModel();
-    poke.guildId = interaction.guildId;
-    poke.hostId = host.id;
-    poke.channelId = channel.id;
+    configuration.guildId = interaction.guildId;
+    configuration.hostRoleId = hostRole.id;
+    configuration.goalsChannelId = goalsChannel.id;
     try {
-        await poke.save();
+        await configuration.save();
     }
     catch (error) {
         interaction.editReply(ErrorMessages_1.COMMON_ERROR_MESSAGES.databaseFail);
@@ -71,9 +75,10 @@ async function Handle(interaction) {
         return;
     }
     try {
-        interaction.editReply(PokeStart_2.CONFIRMATION_MESSAGES.pokeStartSuccessful);
+        interaction.editReply(Configure_2.CONFIRMATION_MESSAGES.configurationSuccessful);
     }
     catch (error) {
         console.error(error);
+        return;
     }
 }

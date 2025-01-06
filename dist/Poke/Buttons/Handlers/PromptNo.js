@@ -6,6 +6,7 @@ const PromptNo_1 = require("../Locale/PromptNo");
 const PromptYes_1 = require("../Locale/PromptYes");
 const Poke_1 = require("../../Models/Poke");
 const ErrorMessages_1 = require("../../Locale/ErrorMessages");
+const ErrorMessages_2 = require("../../../Core/Commands/Locale/ErrorMessages");
 /**
  * Will just send a message saying the person can't make it
  *
@@ -28,7 +29,7 @@ async function Handle(interaction) {
         }
     }
     catch (error) {
-        interaction.editReply(ErrorMessages_1.POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+        interaction.editReply(ErrorMessages_2.COMMON_ERROR_MESSAGES.databaseFail);
         console.error(error);
         return;
     }

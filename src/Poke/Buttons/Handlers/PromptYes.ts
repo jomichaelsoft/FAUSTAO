@@ -4,6 +4,7 @@ import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { CONFIRMATION_MESSAGES, TAGS } from "../Locale/PromptYes";
 import { PickRandomArrayItem } from "../../../Core/Utility/Random";
 import { POKE_COMMON_ERROR_MESSAGES } from "../../Locale/ErrorMessages";
+import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 
 /**
  * Will ping the poke's host warning them that a person wants to join.
@@ -30,7 +31,7 @@ export async function Handle(interaction: ButtonInteraction) {
 			return;
 		}
 	} catch (error) {
-		interaction.editReply(POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
 		console.error(error);
 		return;
 	}

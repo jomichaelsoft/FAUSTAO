@@ -5,6 +5,7 @@ import { TAGS } from "../Locale/PromptYes";
 import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { POKE_COMMON_ERROR_MESSAGES } from "../../Locale/ErrorMessages";
+import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 
 /**
  * Will just send a message saying the person can't make it
@@ -29,7 +30,7 @@ export async function Handle(interaction: ButtonInteraction) {
 			return;
 		}
 	} catch (error) {
-		interaction.editReply(POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
 		console.error(error);
 		return;
 	}

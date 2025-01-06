@@ -5,7 +5,6 @@ import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessag
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { HydratedDocument } from "mongoose";
 import { ERROR_MESSAGES, CONFIRMATION_MESSAGES } from "../Locale/PokeStart";
-import { POKE_COMMON_ERROR_MESSAGES } from "../../Locale/ErrorMessages";
 
 /**
  * Saves info up on a database for later use in the poke cronjob
@@ -24,7 +23,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	if (!interaction.memberPermissions.has(PermissionFlagsBits.Administrator)) {
 		interaction.reply({
-			content: COMMON_ERROR_MESSAGES.commandNotInGuild,
+			content: COMMON_ERROR_MESSAGES.notAnAdmin,
 			flags: MessageFlags.Ephemeral,
 		});
 
@@ -61,7 +60,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 			return;
 		}
 	} catch (error) {
-		interaction.editReply(POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
 		console.log(error);
 		return;
 	}
@@ -75,7 +74,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	try {
 		await poke.save();
 	} catch (error) {
-		interaction.editReply(ERROR_MESSAGES.pokeSaveFailed);
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
 		console.error(error);
 		return;
 	}

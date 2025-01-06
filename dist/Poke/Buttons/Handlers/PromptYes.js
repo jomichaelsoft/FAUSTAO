@@ -5,6 +5,7 @@ const Poke_1 = require("../../Models/Poke");
 const PromptYes_1 = require("../Locale/PromptYes");
 const Random_1 = require("../../../Core/Utility/Random");
 const ErrorMessages_1 = require("../../Locale/ErrorMessages");
+const ErrorMessages_2 = require("../../../Core/Commands/Locale/ErrorMessages");
 /**
  * Will ping the poke's host warning them that a person wants to join.
  * If the person who presses the button is the host, then the session is confirmed
@@ -29,7 +30,7 @@ async function Handle(interaction) {
         }
     }
     catch (error) {
-        interaction.editReply(ErrorMessages_1.POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+        interaction.editReply(ErrorMessages_2.COMMON_ERROR_MESSAGES.databaseFail);
         console.error(error);
         return;
     }

@@ -1,7 +1,6 @@
 export const ERROR_MESSAGES = {
 	hostIsBot: "**Error:** YOU ARE MISTAKEN. A MACHINE CANNOT BE A HOST",
 	pokeAlreadyActive: "**Error:** YOU ARE MISTAKEN. THERE IS ALREADY A POKE ACTIVE IN THIS SERVER",
-	pokeSaveFailed: "**Error:** SAVING UNSUCCESSFUL. FAUSTÃO IS NOT AT FAULT.",
 };
 
 export const CONFIRMATION_MESSAGES = {
