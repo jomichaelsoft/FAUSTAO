@@ -46,16 +46,18 @@ async function GetParticipatePrompt(readyClient: Client<true>, poke: HydratedDoc
 		return prompt
 	}
 
-	const host: GuildMember | undefined = server.members.cache.get(poke.hostUserId)
+	let host: GuildMember
 
-	if (!host) {
+	try {
+		host = await server.members.fetch(poke.hostUserId)
+	} catch (error) {
 		console.error("Can't find host")
 		return prompt
 	}
 
 	embed.setAuthor({
 		name: PARTICIPATE_PROMPT.authorNameTemplate.replace(TAGS.hostName, host.user.displayName),
-		iconURL: host.user.avatar || "https://cdn.discordapp.com/embed/avatars/5.png"
+		iconURL: host.user.avatarURL() || "https://cdn.discordapp.com/embed/avatars/5.png"
 	})
 
 	return prompt

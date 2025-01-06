@@ -1,4 +1,5 @@
 export const ERROR_MESSAGES = {
+	couldntFetchPreviousGoals: "**Error:** DISCORD FAILED TO FETCH YOUR PREVIOUS GOALS",
 	cantFindGoalsChannel: "**Error:** ODDLY, THE GOALS CHANNEL IS UNAVAILABLE",
 	goalsChannelUnsendable: "**Error:** I DO NOT POSSESS ACCESS TO THE GOALS CHANNEL",
 	couldntSendMessage: "**Error:** DISCORD FAILED TO SEND YOUR MESSAGE",

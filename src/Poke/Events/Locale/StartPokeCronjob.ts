@@ -9,7 +9,7 @@ export const PARTICIPATE_PROMPT = {
 		"FAUSTÃO'S CREATION WAS NOT IN VAIN.",
 	],
 
-	authorNameTemplate: `YOUR CURRENT MANAGER IS: \`[${TAGS.hostName}]\``,
+	authorNameTemplate: `wake your host up: [${TAGS.hostName}]`,
 	description: "🌙 `[As the dawn approaches, you wonder if there should be a session today]`",
 	yesButtonLabel: "[ask the manager]",
 	yesButtonEmoji: "⏰",

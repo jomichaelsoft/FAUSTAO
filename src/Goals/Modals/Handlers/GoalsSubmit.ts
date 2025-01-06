@@ -1,11 +1,12 @@
 // prettier-ignore
-import { GuildBasedChannel, MessageCreateOptions, MessageFlags, ModalSubmitInteraction } from "discord.js";
+import { GuildBasedChannel, Message, MessageCreateOptions, MessageFlags, ModalSubmitInteraction } from "discord.js";
 import { TextInputCustomId } from "../Enums/GoalsSubmit";
 import { HydratedDocument } from "mongoose";
 import { ConfigurationModel, IConfigurationDocument } from "../../../Configuration/Models/Configuration";
 import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 import { CONFIGURATION_COMMON_ERROR_MESSAGES } from "../../../Configuration/Locale/ErrorMessages";
 import { CONFIRMATION_MESSAGES, ERROR_MESSAGES, GOALS_MESSAGE, TAGS } from "../Locale/GoalsSubmit";
+import { GoalsModel, IGoalsDocument } from "../../Models/Goals";
 
 /**
  * Formats all the templates to generate the goals message
@@ -93,13 +94,60 @@ export async function Handle(interaction: ModalSubmitInteraction) {
 		return;
 	}
 
+	let previousGoals: HydratedDocument<IGoalsDocument> | null;
+
+	try {
+		previousGoals = await GoalsModel.findOne({ guildId: interaction.guildId, userId: interaction.user.id });
+	} catch (error) {
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
+		console.error(error);
+		return;
+	}
+
+	if (previousGoals) {
+		let message: Message<true> | null;
+
+		try {
+			message = await goalsChannel.messages.fetch(previousGoals.messageId);
+		} catch (error) {
+			message = null;
+			console.error(error);
+		}
+
+		if (message) {
+			try {
+				await message.delete();
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	}
+
 	const objectives: string = interaction.fields.getTextInputValue(TextInputCustomId.objectives);
 	const inspirations: string = interaction.fields.getTextInputValue(TextInputCustomId.inspirations);
 
+	let message: Message<true>;
+
 	try {
-		await goalsChannel.send(GetGoalsMessage(objectives, inspirations, interaction.user.id));
+		message = await goalsChannel.send(GetGoalsMessage(objectives, inspirations, interaction.user.id));
 	} catch (error) {
 		interaction.editReply(ERROR_MESSAGES.couldntSendMessage);
+		console.error(error);
+		return;
+	}
+
+	const goalsDocument: HydratedDocument<IGoalsDocument> = previousGoals || new GoalsModel();
+
+	goalsDocument.guildId = interaction.guildId;
+	goalsDocument.userId = interaction.user.id;
+	goalsDocument.objectives = objectives;
+	goalsDocument.inspirations = inspirations;
+	goalsDocument.messageId = message.id;
+
+	try {
+		await goalsDocument.save();
+	} catch (error) {
+		interaction.editReply(COMMON_ERROR_MESSAGES.databaseFail);
 		console.error(error);
 		return;
 	}
