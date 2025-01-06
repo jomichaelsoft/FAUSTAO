@@ -2,7 +2,13 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 import { ERROR_MESSAGES, MODAL } from "../Locale/GoalsSet";
+import { MODAL_DATA } from "../../Modals/Data/GoalsSubmit";
 
+/**
+ * Sends a form to the end user asking them what their art goals are
+ *
+ * @param interaction The command's origin
+ */
 export async function Handle(interaction: ChatInputCommandInteraction) {
 	if (!interaction.inCachedGuild()) {
 		interaction.reply({
@@ -18,22 +24,22 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	objectivesRow.addComponents(
 		new TextInputBuilder()
-			.setCustomId("todo2")
-			.setLabel(MODAL.objectivesRowLabel)
+			.setCustomId(MODAL_DATA.inputCustomIds.objectives)
+			.setLabel(MODAL.objectivesInputLabel)
 			.setStyle(TextInputStyle.Paragraph)
 			.setRequired(true)
 	);
 
 	inspirationsRow.addComponents(
 		new TextInputBuilder()
-			.setCustomId("todo1")
-			.setLabel(MODAL.inspirationsRowLabel)
+			.setCustomId(MODAL_DATA.inputCustomIds.inspirations)
+			.setLabel(MODAL.inspirationsInputLabel)
 			.setStyle(TextInputStyle.Short)
 			.setRequired(true)
 	);
 
 	const modal: ModalBuilder = new ModalBuilder()
-		.setCustomId("TODO")
+		.setCustomId(MODAL_DATA.customId)
 		.setTitle(MODAL.title)
 		.addComponents(objectivesRow, inspirationsRow);
 

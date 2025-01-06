@@ -1,10 +1,12 @@
-/** Basically the button's name */
+import { ButtonInteraction } from "discord.js";
+
+/** What to use to identify the button */
 export type ButtonCustomId = string;
 
 /** What the button does */
-export type ButtonHandler = (...args: any) => void;
+export type ButtonHandler = (interaction: ButtonInteraction) => void;
 
-/** Information used to register and execute slash commands */
+/** Information used to make the button work */
 export interface IButtonData {
 	customId: ButtonCustomId;
 	handler: ButtonHandler;

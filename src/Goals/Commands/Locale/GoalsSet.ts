@@ -4,6 +4,6 @@ export const ERROR_MESSAGES = {
 
 export const MODAL = {
 	title: "SO.... Where do you wanna go with your art?",
-	objectivesRowLabel: "Objectives",
-	inspirationsRowLabel: "People who inspire me",
+	objectivesInputLabel: "Objectives",
+	inspirationsInputLabel: "People who inspire me",
 };

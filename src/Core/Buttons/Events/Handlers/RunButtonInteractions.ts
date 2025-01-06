@@ -7,13 +7,13 @@ import { join } from "path";
 let loadedHandlers: Map<string, ButtonHandler> | undefined;
 
 /**
- * Finds and maps every command name of the project to its handler
+ * Finds and maps every button's customId to its handler
  *
  * Note: consequentially, every module in each "../Buttons/Data"
  * folder must have a `BUTTON_DATA` export, which should
  * be of type `IButtonData`
  *
- * @returns a map of { [commandName]: handler }
+ * @returns a map of { [customId]: handler }
  */
 function GetEveryButtonHandler(): Map<string, ButtonHandler> {
 	const handlers: Map<string, ButtonHandler> = new Map();
@@ -33,10 +33,10 @@ function GetEveryButtonHandler(): Map<string, ButtonHandler> {
 }
 
 /**
- * Finds and runs the `interaction's` slash command
+ * Finds and runs the `interaction's` button handler
  *
- * @param interaction What was used to call the command
- * @throws if the command the `interaction` wants to call doesn't have a handler
+ * @param interaction The button press' origin
+ * @throws if the button the `interaction` wants to handle doesn't have a handler
  */
 export function Handle(interaction: Interaction) {
 	if (!interaction.isButton()) {
