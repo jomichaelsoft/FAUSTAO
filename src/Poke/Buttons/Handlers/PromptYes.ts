@@ -1,4 +1,4 @@
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, MessageFlags } from "discord.js";
 import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { CONFIRMATION_MESSAGES, TAGS } from "../Locale/PromptYes";
@@ -14,6 +14,15 @@ import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessag
  * @param interaction What triggered the button click
  */
 export async function Handle(interaction: ButtonInteraction) {
+	if (!interaction.inCachedGuild()) {
+		interaction.reply({
+			content: COMMON_ERROR_MESSAGES.buttonNotInGuild,
+			flags: MessageFlags.Ephemeral,
+		});
+
+		return;
+	}
+
 	try {
 		await interaction.deferReply();
 	} catch (error) {
@@ -36,7 +45,7 @@ export async function Handle(interaction: ButtonInteraction) {
 		return;
 	}
 
-	if (poke.hostId === interaction.user.id) {
+	if (poke.hostUserId === interaction.user.id) {
 		try {
 			await interaction.editReply(CONFIRMATION_MESSAGES.host);
 			interaction.message.delete();
@@ -50,7 +59,7 @@ export async function Handle(interaction: ButtonInteraction) {
 	try {
 		const message: string = PickRandomArrayItem(CONFIRMATION_MESSAGES.participants);
 		const formattedMessage: string = message
-			.replace(TAGS.hostId, poke.hostId)
+			.replace(TAGS.hostUserId, poke.hostUserId)
 			.replace(TAGS.participantName, interaction.user.displayName);
 
 		await interaction.editReply(formattedMessage);

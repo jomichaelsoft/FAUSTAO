@@ -2,7 +2,7 @@ import { Model, model, Schema, SchemaTypes } from "mongoose";
 
 export interface IPokeDocument {
 	guildId: string;
-	hostId: string;
+	hostUserId: string;
 	channelId: string;
 }
 
@@ -13,7 +13,7 @@ export const PokeSchema: Schema<IPokeDocument> = new Schema({
 		immutable: true,
 	},
 
-	hostId: {
+	hostUserId: {
 		type: SchemaTypes.String,
 		required: true,
 	},

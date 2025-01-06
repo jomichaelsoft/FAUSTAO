@@ -7,8 +7,7 @@ export type ModalCustomId = string;
 export type ModalHandler = (interaction: ModalSubmitInteraction) => void;
 
 /** Information used to give the modal functionality  */
-export interface IModalData<I> {
+export interface IModalData {
 	customId: ModalCustomId;
-	inputCustomIds: I;
 	handler: ModalHandler;
 }

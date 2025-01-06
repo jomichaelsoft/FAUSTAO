@@ -1,17 +1,18 @@
 // prettier-ignore
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, MessageCreateOptions } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, Guild, GuildMember, MessageCreateOptions, User } from "discord.js";
 import { CronJob } from "cron";
 import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { BUTTON_DATA as YES_BUTTON_DATA } from "../../Buttons/Data/PromptYes";
 import { BUTTON_DATA as NO_BUTTON_DATA } from "../../Buttons/Data/PromptNo";
-import { PARTICIPATE_PROMPT } from "../Locale/StartPokeCronjob";
+import { PARTICIPATE_PROMPT, TAGS } from "../Locale/StartPokeCronjob";
 import { PickRandomArrayItem } from "../../../Core/Utility/Random";
 
+// prettier-ignore
 /**
  * @returns A message saying the day begun and if there should be a session
  */
-function GetParticipatePrompt(): MessageCreateOptions {
+async function GetParticipatePrompt(readyClient: Client<true>, poke: HydratedDocument<IPokeDocument>): Promise<MessageCreateOptions> {
 	const embed: EmbedBuilder = new EmbedBuilder()
 		.setTitle(PickRandomArrayItem(PARTICIPATE_PROMPT.titles))
 		.setDescription(PARTICIPATE_PROMPT.description)
@@ -33,10 +34,31 @@ function GetParticipatePrompt(): MessageCreateOptions {
 			.setEmoji(PARTICIPATE_PROMPT.noButtonEmoji)
 	);
 
-	return {
+	const prompt: MessageCreateOptions = {
 		embeds: [embed],
 		components: [buttonRow],
 	};
+
+	const server: Guild | undefined = readyClient.guilds.cache.get(poke.guildId)
+
+	if (!server) {
+		console.error("Can't find guild of poke")
+		return prompt
+	}
+
+	const host: GuildMember | undefined = server.members.cache.get(poke.hostUserId)
+
+	if (!host) {
+		console.error("Can't find host")
+		return prompt
+	}
+
+	embed.setAuthor({
+		name: PARTICIPATE_PROMPT.authorNameTemplate.replace(TAGS.hostName, host.user.displayName),
+		iconURL: host.user.avatar || "https://cdn.discordapp.com/embed/avatars/5.png"
+	})
+
+	return prompt
 }
 
 // Every day, at 00:00 UTC-5 (Arch Time)
@@ -77,7 +99,9 @@ export function Handle(readyClient: Client<true>) {
 				}
 
 				try {
-					await channel.send(GetParticipatePrompt());
+					const prompt: MessageCreateOptions = await GetParticipatePrompt(readyClient, poke);
+
+					await channel.send(prompt);
 				} catch (error) {
 					console.error(error);
 					continue;

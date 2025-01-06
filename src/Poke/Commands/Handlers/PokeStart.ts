@@ -112,7 +112,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	const poke: HydratedDocument<IPokeDocument> = new PokeModel();
 
 	poke.guildId = interaction.guildId;
-	poke.hostId = host.id;
+	poke.hostUserId = host.id;
 	poke.channelId = channel.id;
 
 	try {

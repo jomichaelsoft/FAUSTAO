@@ -2,6 +2,7 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 import { ERROR_MESSAGES, MODAL } from "../Locale/GoalsSet";
+import { TextInputCustomId } from "../../Modals/Enums/GoalsSubmit";
 import { MODAL_DATA } from "../../Modals/Data/GoalsSubmit";
 
 /**
@@ -24,7 +25,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	objectivesRow.addComponents(
 		new TextInputBuilder()
-			.setCustomId(MODAL_DATA.inputCustomIds.objectives)
+			.setCustomId(TextInputCustomId.objectives)
 			.setLabel(MODAL.objectivesInputLabel)
 			.setStyle(TextInputStyle.Paragraph)
 			.setRequired(true)
@@ -32,7 +33,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	inspirationsRow.addComponents(
 		new TextInputBuilder()
-			.setCustomId(MODAL_DATA.inputCustomIds.inspirations)
+			.setCustomId(TextInputCustomId.inspirations)
 			.setLabel(MODAL.inspirationsInputLabel)
 			.setStyle(TextInputStyle.Short)
 			.setRequired(true)
