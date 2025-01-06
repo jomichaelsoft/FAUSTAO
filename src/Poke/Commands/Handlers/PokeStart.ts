@@ -5,6 +5,7 @@ import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessag
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { HydratedDocument } from "mongoose";
 import { ERROR_MESSAGES, CONFIRMATION_MESSAGES } from "../Locale/PokeStart";
+import { POKE_COMMON_ERROR_MESSAGES } from "../../Locale/ErrorMessages";
 
 /**
  * Saves info up on a database for later use in the poke cronjob
@@ -60,7 +61,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 			return;
 		}
 	} catch (error) {
-		interaction.editReply(ERROR_MESSAGES.pokeLookupFailed);
+		interaction.editReply(POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
 		console.log(error);
 		return;
 	}

@@ -1,8 +1,59 @@
 import { ButtonInteraction } from "discord.js";
+import { HydratedDocument } from "mongoose";
+import { IPokeDocument, PokeModel } from "../../Models/Poke";
+import { CONFIRMATION_MESSAGES, TAGS } from "../Locale/PromptYes";
+import { PickRandomArrayItem } from "../../../Core/Utility/Random";
+import { POKE_COMMON_ERROR_MESSAGES } from "../../Locale/ErrorMessages";
 
-// 1. retrieve prompt message
-// 2. edit it so it contains peoples usernames (i guess use a singleton to keep track of that)
-// 3. reply
-export function Handle(interaction: ButtonInteraction) {
-	interaction.message.edit("asd")
+/**
+ * Will ping the poke's host warning them that a person wants to join.
+ * If the person who presses the button is the host, then the session is confirmed
+ * and the prompt message is deleted
+ *
+ * @param interaction What triggered the button click
+ */
+export async function Handle(interaction: ButtonInteraction) {
+	try {
+		await interaction.deferReply();
+	} catch (error) {
+		console.error(error);
+		return;
+	}
+
+	let poke: HydratedDocument<IPokeDocument> | null;
+
+	try {
+		poke = await PokeModel.findOne({ guildId: interaction.guildId });
+
+		if (!poke) {
+			interaction.editReply(POKE_COMMON_ERROR_MESSAGES.noPokeInGuild);
+			return;
+		}
+	} catch (error) {
+		interaction.editReply(POKE_COMMON_ERROR_MESSAGES.pokeLookupFailed);
+		console.error(error);
+		return;
+	}
+
+	if (poke.hostId === interaction.user.id) {
+		try {
+			await interaction.editReply(CONFIRMATION_MESSAGES.host);
+			interaction.message.delete();
+		} catch (error) {
+			console.error(error);
+		}
+
+		return;
+	}
+
+	try {
+		const message: string = PickRandomArrayItem(CONFIRMATION_MESSAGES.participants);
+		const formattedMessage: string = message
+			.replace(TAGS.hostId, poke.hostId)
+			.replace(TAGS.participantName, interaction.user.displayName);
+
+		interaction.editReply(formattedMessage);
+	} catch (error) {
+		console.error(error);
+	}
 }

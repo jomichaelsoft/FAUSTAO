@@ -1,40 +1,20 @@
 // prettier-ignore
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, Message, MessageCreateOptions } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, MessageCreateOptions } from "discord.js";
 import { CronJob } from "cron";
 import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { BUTTON_DATA as YES_BUTTON_DATA } from "../../Buttons/Data/PromptYes";
 import { BUTTON_DATA as NO_BUTTON_DATA } from "../../Buttons/Data/PromptNo";
-import { MOTIVATIONAL_MESSAGES, PARTICIPATE_PROMPT, TAGS } from "../Locale/StartPokeCronjob";
+import { PARTICIPATE_PROMPT } from "../Locale/StartPokeCronjob";
+import { PickRandomArrayItem } from "../../../Core/Utility/Random";
 
 /**
- * @param array Where to pick from
- * @returns A random value picked from `array`
- */
-function PickRandomArrayItem(array: Array<any>): any {
-	const randomIndex: number = Math.floor(Math.random() * array.length);
-	return array.at(randomIndex);
-}
-
-/**
- * @returns The motivational message
- */
-function GetMotivationalMessage(): MessageCreateOptions {
-	return {
-		content: PickRandomArrayItem(MOTIVATIONAL_MESSAGES),
-	};
-}
-
-/**
- * @returns The message contents of our "people who want a session today"  list
+ * @returns A message saying the day begun and if there should be a session
  */
 function GetParticipatePrompt(): MessageCreateOptions {
-	const regex: RegExp = new RegExp(TAGS.promptYes + "|" + TAGS.promptNo, "g");
-	const prompt: string = PARTICIPATE_PROMPT.template.replace(regex, "...");
-
 	const embed: EmbedBuilder = new EmbedBuilder()
-		.setTitle(PARTICIPATE_PROMPT.embedTitle)
-		.setDescription(prompt)
+		.setTitle(PickRandomArrayItem(PARTICIPATE_PROMPT.titles))
+		.setDescription(PARTICIPATE_PROMPT.description)
 		.setColor("#c4dbff");
 
 	const buttonRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder();
@@ -43,12 +23,14 @@ function GetParticipatePrompt(): MessageCreateOptions {
 		new ButtonBuilder()
 			.setCustomId(YES_BUTTON_DATA.customId)
 			.setLabel(PARTICIPATE_PROMPT.yesButtonLabel)
-			.setStyle(ButtonStyle.Primary),
+			.setStyle(ButtonStyle.Primary)
+			.setEmoji(PARTICIPATE_PROMPT.yesButtonEmoji),
 
 		new ButtonBuilder()
 			.setCustomId(NO_BUTTON_DATA.customId)
 			.setLabel(PARTICIPATE_PROMPT.noButtonLabel)
 			.setStyle(ButtonStyle.Secondary)
+			.setEmoji(PARTICIPATE_PROMPT.noButtonEmoji)
 	);
 
 	return {
@@ -58,8 +40,7 @@ function GetParticipatePrompt(): MessageCreateOptions {
 }
 
 // Every day, at 00:00 UTC-5 (Arch Time)
-// TODO: REPLACE WITH "0 0 0 */1 * *"
-const CRON_TIME: string = "*/10 * * * * *";
+const CRON_TIME: string = "0 0 0 */1 * *";
 
 /**
  * Creates a cronjob that when executed, will send a motivational message in the poke channel
@@ -96,9 +77,7 @@ export function Handle(readyClient: Client<true>) {
 				}
 
 				try {
-					const motivationalMessage: Message = await channel.send(GetMotivationalMessage());
-
-					motivationalMessage.reply(GetParticipatePrompt());
+					await channel.send(GetParticipatePrompt());
 				} catch (error) {
 					console.error(error);
 				}
