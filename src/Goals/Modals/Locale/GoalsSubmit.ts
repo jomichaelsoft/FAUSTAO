@@ -6,8 +6,8 @@ export const ERROR_MESSAGES = {
 };
 
 export const EMOJIS = {
-	interviewer: "<:Interviewer:1325928868401512653>",
-	intervewee: "<:Intervewee:1325928935195938878>",
+	interviewer: "<:Interviewer:1325952553711697930>",
+	intervewee: "<:Intervewee:1325952532006178847>",
 };
 
 export const TAGS = {
