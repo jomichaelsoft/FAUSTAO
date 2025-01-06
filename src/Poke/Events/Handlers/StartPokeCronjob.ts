@@ -5,6 +5,7 @@ import { HydratedDocument } from "mongoose";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { BUTTON_DATA as YES_BUTTON_DATA } from "../../Buttons/Data/PromptYes";
 import { BUTTON_DATA as NO_BUTTON_DATA } from "../../Buttons/Data/PromptNo";
+import { MOTIVATIONAL_MESSAGES, PARTICIPATE_PROMPT, TAGS } from "../Locale/StartPokeCronjob";
 
 /**
  * @param array Where to pick from
@@ -19,39 +20,35 @@ function PickRandomArrayItem(array: Array<any>): any {
  * @returns The motivational message
  */
 function GetMotivationalMessage(): MessageCreateOptions {
-	const possibilities: Array<string> = [
-		"LABOR IS VALUABLE.",
-		"TENACITY IS YOUR ONLY WEAPON.",
-		"FAUSTÃO'S CREATION WAS NOT IN VAIN.",
-		"FAUSTÃO THINKS YOU LACK ENKEPHALIN.",
-	];
-
 	return {
-		content: PickRandomArrayItem(possibilities),
+		content: PickRandomArrayItem(MOTIVATIONAL_MESSAGES),
 	};
 }
-
-export const PROMPT_YES_TAG: string = "%YES%";
-export const PROMPT_NO_TAG: string = "%NO%";
-export const PROMPT_TEMPLATE: string = `SINNERS, SIMPLY CAST YOUR VOTE BELOW IF YOU'RE INTERESTED \n_ _\n**✅:**\n${PROMPT_YES_TAG}\n\n**❌:**\n${PROMPT_NO_TAG}`;
 
 /**
  * @returns The message contents of our "people who want a session today"  list
  */
 function GetParticipatePrompt(): MessageCreateOptions {
-	const regex: RegExp = new RegExp(PROMPT_YES_TAG + "|" + PROMPT_NO_TAG, "g");
-	const prompt: string = PROMPT_TEMPLATE.replace(regex, "...");
+	const regex: RegExp = new RegExp(TAGS.promptYes + "|" + TAGS.promptNo, "g");
+	const prompt: string = PARTICIPATE_PROMPT.template.replace(regex, "...");
 
 	const embed: EmbedBuilder = new EmbedBuilder()
-		.setTitle("MUST WE COMMENCE ARTISTRY, MANAGER?")
+		.setTitle(PARTICIPATE_PROMPT.embedTitle)
 		.setDescription(prompt)
 		.setColor("#c4dbff");
 
 	const buttonRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder();
 
 	buttonRow.setComponents(
-		new ButtonBuilder().setCustomId(YES_BUTTON_DATA.customId).setLabel("INTERESTED").setStyle(ButtonStyle.Primary),
-		new ButtonBuilder().setCustomId(NO_BUTTON_DATA.customId).setLabel("FORFEIT").setStyle(ButtonStyle.Secondary)
+		new ButtonBuilder()
+			.setCustomId(YES_BUTTON_DATA.customId)
+			.setLabel(PARTICIPATE_PROMPT.yesButtonLabel)
+			.setStyle(ButtonStyle.Primary),
+
+		new ButtonBuilder()
+			.setCustomId(NO_BUTTON_DATA.customId)
+			.setLabel(PARTICIPATE_PROMPT.noButtonLabel)
+			.setStyle(ButtonStyle.Secondary)
 	);
 
 	return {

@@ -1,9 +1,10 @@
 // prettier-ignore
 import { ChannelType, ChatInputCommandInteraction, MessageFlags, NewsChannel, PermissionFlagsBits, TextChannel, User } from "discord.js";
 import { CommandOption } from "../Enums/PokeStart";
-import { COMMAND_NOT_IN_GUILD, NOT_AN_ADMIN } from "../../../Core/Commands/Utility/ErrorMessages";
+import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 import { IPokeDocument, PokeModel } from "../../Models/Poke";
 import { HydratedDocument } from "mongoose";
+import { ERROR_MESSAGES, CONFIRMATION_MESSAGES } from "../Locale/PokeStart";
 
 /**
  * Saves info up on a database for later use in the poke cronjob
@@ -13,7 +14,7 @@ import { HydratedDocument } from "mongoose";
 export async function Handle(interaction: ChatInputCommandInteraction) {
 	if (!interaction.inCachedGuild()) {
 		interaction.reply({
-			content: COMMAND_NOT_IN_GUILD,
+			content: COMMON_ERROR_MESSAGES.commandNotInGuild,
 			flags: MessageFlags.Ephemeral,
 		});
 
@@ -22,7 +23,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	if (!interaction.memberPermissions.has(PermissionFlagsBits.Administrator)) {
 		interaction.reply({
-			content: NOT_AN_ADMIN,
+			content: COMMON_ERROR_MESSAGES.commandNotInGuild,
 			flags: MessageFlags.Ephemeral,
 		});
 
@@ -37,7 +38,7 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 
 	if (host.bot) {
 		interaction.reply({
-			content: "**Error:** YOU ARE MISTAKEN. A MACHINE CANNOT BE A HOST",
+			content: ERROR_MESSAGES.hostIsBot,
 			flags: MessageFlags.Ephemeral,
 		});
 
@@ -55,11 +56,11 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 		const existingPoke: HydratedDocument<IPokeDocument> | null = await PokeModel.findOne({ guildId: interaction.guildId });
 
 		if (existingPoke) {
-			interaction.editReply("**Error:** YOU ARE MISTAKEN. THERE IS ALREADY A POKE ACTIVE IN THIS SERVER");
+			interaction.editReply(ERROR_MESSAGES.pokeAlreadyActive);
 			return;
 		}
 	} catch (error) {
-		interaction.editReply("**Error:** A TRUE SHAME THAT THE DATABASE FAILED SUCH A MUNDANE TASK");
+		interaction.editReply(ERROR_MESSAGES.pokeLookupFailed);
 		console.log(error);
 		return;
 	}
@@ -73,13 +74,13 @@ export async function Handle(interaction: ChatInputCommandInteraction) {
 	try {
 		await poke.save();
 	} catch (error) {
-		interaction.editReply("**Error:** SAVING UNSUCCESFUL. FAUSTÃO IS NOT AT FAULT.");
+		interaction.editReply(ERROR_MESSAGES.pokeSaveFailed);
 		console.error(error);
 		return;
 	}
 
 	try {
-		interaction.editReply("MAGNIFICENT SETUP. YOU ARE NOW TO BE WARNED EVERY DAY AT `00:00 UTC-5 (Arch Time)`");
+		interaction.editReply(CONFIRMATION_MESSAGES.pokeStartSuccessful);
 	} catch (error) {
 		console.error(error);
 	}
