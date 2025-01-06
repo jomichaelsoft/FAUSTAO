@@ -5,8 +5,50 @@ import { HydratedDocument } from "mongoose";
 import { ConfigurationModel, IConfigurationDocument } from "../../../Configuration/Models/Configuration";
 import { COMMON_ERROR_MESSAGES } from "../../../Core/Commands/Locale/ErrorMessages";
 import { CONFIGURATION_COMMON_ERROR_MESSAGES } from "../../../Configuration/Locale/ErrorMessages";
-import { ERROR_MESSAGES } from "../Locale/GoalsSubmit";
+import { CONFIRMATION_MESSAGES, ERROR_MESSAGES, GOALS_MESSAGE, TAGS } from "../Locale/GoalsSubmit";
 
+/**
+ * Formats all the templates to generate the goals message
+ *
+ * @param objectives What are the persons objectives with art
+ * @param inspirations Who is the person inspired by
+ * @param interactionUserId Who answered the modal
+ * @returns The message
+ */
+function GetGoalsMessage(objectives: string, inspirations: string, interactionUserId: string): MessageCreateOptions {
+	const objectivesQuestion: string = GOALS_MESSAGE.objectivesQuestionTemplate.replace(
+		TAGS.interactionUserId,
+		interactionUserId
+	);
+
+	const objectivesAnswer: string = GOALS_MESSAGE.objectivesAnswerTemplate.replace(TAGS.objectives, objectives);
+	const inspirationsQuestion: string = GOALS_MESSAGE.inspirationQuestionTemplate;
+	const inspirationsAnswer: string = GOALS_MESSAGE.inspirationAnswerTemplate.replace(TAGS.inspirations, inspirations);
+
+	const dateNow: string = new Date(Date.now()).toLocaleString();
+	const lastUpdated: string = GOALS_MESSAGE.lastUpdatedTemplate.replace(TAGS.dateNow, dateNow);
+	const lineBreak: string = "\n";
+	const lineBreakWhitespace: string = "\n_ _\n";
+
+	return {
+		content:
+			objectivesQuestion +
+			lineBreakWhitespace +
+			objectivesAnswer +
+			lineBreak +
+			inspirationsQuestion +
+			lineBreakWhitespace +
+			inspirationsAnswer +
+			lineBreakWhitespace +
+			lastUpdated,
+	};
+}
+
+/**
+ * Sends a cool message in the goals channel
+ *
+ * @param interaction What summoned the model
+ */
 export async function Handle(interaction: ModalSubmitInteraction) {
 	if (!interaction.inCachedGuild()) {
 		interaction.reply({
@@ -18,7 +60,7 @@ export async function Handle(interaction: ModalSubmitInteraction) {
 	}
 
 	try {
-		await interaction.deferReply();
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 	} catch (error) {
 		console.error(error);
 		return;
@@ -53,4 +95,19 @@ export async function Handle(interaction: ModalSubmitInteraction) {
 
 	const objectives: string = interaction.fields.getTextInputValue(TextInputCustomId.objectives);
 	const inspirations: string = interaction.fields.getTextInputValue(TextInputCustomId.inspirations);
+
+	try {
+		await goalsChannel.send(GetGoalsMessage(objectives, inspirations, interaction.user.id));
+	} catch (error) {
+		interaction.editReply(ERROR_MESSAGES.couldntSendMessage);
+		console.error(error);
+		return;
+	}
+
+	try {
+		await interaction.editReply(CONFIRMATION_MESSAGES.goalsSubmitWorked);
+	} catch (error) {
+		console.error(error);
+		return;
+	}
 }
